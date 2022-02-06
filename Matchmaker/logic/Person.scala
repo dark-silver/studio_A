@@ -1,7 +1,7 @@
 package logic
 
 /**
- * A class representing a Person used in the Matcmaker.
+ * A class representing a Person used in the Matchmaker.
  * Super class for the different types of Person.
  */
 abstract class Person(val name: String, val favoriteColor: Color, val hobby: String, val occupation: String) {
@@ -14,14 +14,14 @@ abstract class Person(val name: String, val favoriteColor: Color, val hobby: Str
    * Method that calculates a match score for two people. The result should be
    * the average of matching each person with the other both ways.
    */
-  def bothMatch(other: Person): Int = ???
+  def bothMatch(other: Person): Int = (other.calculateMatch(this) + this.calculateMatch(other)) / 2
 
   override
   def toString = s"${this.name}: (${this.favoriteColor}, ${this.hobby}, ${this.occupation  })"
 }
 
 /**
- * Perectionist person.
+ * Perfectionist person.
  * The perfectionist scores their matches in the following manner:
  *
  * 		- 100 p - other is also a Perfectionist and all the interests are the same (except name)
@@ -33,7 +33,13 @@ abstract class Person(val name: String, val favoriteColor: Color, val hobby: Str
 case class Perfectionist(n: String, fColor: Color, hobb: String, occ: String)
   extends Person (n, fColor, hobb, occ) {
 
-  def calculateMatch(other: Person) = ???
+  def calculateMatch(other: Person) = {
+    other match {
+      case Perfectionist(_, this.fColor, this.hobb, this.occ) => 100
+      case Hobbyist     (_, this.fColor, this.hobb, this.occ) => 90
+      case _                                                  => 0
+    }
+  }
 
 }
 
@@ -49,14 +55,25 @@ case class Perfectionist(n: String, fColor: Color, hobb: String, occ: String)
  * 		- 80 p -	other person is not a hobbyist, but has the same hobby,
  * 							but no other matching interests
  *
- * 		- 60 p - 	other person is also a Hobyist, but has a different hobby
+ * 		- 60 p - 	other person is also a Hobbyist, but has a different hobby
  *
  * 		- 0 p - 	None of the above
  */
 case class Hobbyist(n: String, fColor: Color, hobb: String, occ: String)
   extends Person (n, fColor, hobb, occ) {
 
-  def calculateMatch(other: Person) = ???
+  def calculateMatch(other: Person) = {
+    other match {
+      case Hobbyist     (_, _           , this.hobb, _          ) => 100
+      case Perfectionist(_, this.fColor , this.hobb, _          ) |
+           Perfectionist(_, _           , this.hobb, this.occ   ) |
+           ColorNeutral (_              , this.hobb, this.occ   ) => 90
+      case Perfectionist(_, _           , this.hobb, _          ) |
+           ColorNeutral (_              , this.hobb, _          ) => 80
+      case Hobbyist     (_, _           , _        , _          ) => 60
+      case _                                                      => 0
+    }
+  }
 }
 
 
@@ -73,7 +90,16 @@ case class Hobbyist(n: String, fColor: Color, hobb: String, occ: String)
  */
 case class ColorNeutral(n: String, hobb: String, occ: String)
   extends Person (n, NoColor, hobb, occ) {
-  def calculateMatch(other: Person) = ???
+  def calculateMatch(other: Person) = {
+    other match {
+      case ColorNeutral                (_, _, _, _) => 100
+      case Hobbyist     (_, _, this.hobb, _       ) |
+           Hobbyist     (_, _, _        , this.occ) |
+           Perfectionist(_, _, _        , this.occ) |
+           Perfectionist(_, _, this.hobb, _       ) => 90
+      case _                                        => 0
+    }
+  }
 }
 
 
