@@ -12,6 +12,13 @@ class Matchmaker(personData: Array[Person]) {
    * e.g. take only (Matt, Laura) or (Laura, Matt). If the person appears earlier in the list
    * you should put them as the first half o f the pair.
    */
-  def matchMap: Map[(Person, Person), Int] = ???
+  def matchMap: Map[(Person, Person), Int] = {
+    var personsMap = Map[(Person, Person), Int]()
+    for {
+      (person <- personData)
+      (other <- personData.drop(personData.indexOf(person) + 1))
+    } yield personsMap += ((person, other) -> person.bothMatch(other))
+    return personsMap
+    }
   
 }
