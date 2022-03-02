@@ -92,7 +92,7 @@ case class ColorNeutral(n: String, hobb: String, occ: String)
   extends Person (n, NoColor, hobb, occ) {
   def calculateMatch(other: Person) = {
     other match {
-      case ColorNeutral                (_, _, _, _) => 100
+      case ColorNeutral (_, _, _)                => 100
       case Hobbyist     (_, _, this.hobb, _       ) |
            Hobbyist     (_, _, _        , this.occ) |
            Perfectionist(_, _, _        , this.occ) |

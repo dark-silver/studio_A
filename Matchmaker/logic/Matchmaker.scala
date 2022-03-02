@@ -15,8 +15,8 @@ class Matchmaker(personData: Array[Person]) {
   def matchMap: Map[(Person, Person), Int] = {
     var personsMap = Map[(Person, Person), Int]()
     for {
-      (person <- personData)
-      (other <- personData.drop(personData.indexOf(person) + 1))
+      person <- personData
+      other <- personData.drop(personData.indexOf(person) + 1)
     } yield personsMap += ((person, other) -> person.bothMatch(other))
     return personsMap
     }
